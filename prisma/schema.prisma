@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id_Cliente String    @id @default(uuid())
+  nome       String
+  cpf        String
+  email      String
+  telefone   String
+  Entregas   Entrega[]
+}
+
+model Motorista {
+  id_Motorista     String    @id @default(uuid())
+  nome             String
+  cnh              String
+  email            String
+  telefone         String
+  localizacaoAtual Json
+  Entregas         Entrega[]
+  Rotas            Rota[]
+}
+
+model UsuarioAdministrador {
+  id_Admin String @id @default(uuid())
+  nome     String
+  email    String
+  senha    String
+}
+
+model Entrega {
+  id_Entrega          String     @id @default(uuid())
+  Cliente             Cliente    @relation(fields: [id_Cliente], references: [id_Cliente])
+  id_Cliente          String
+  origem              Json
+  destino             Json
+  status              String
+  dataHoraCriacao     DateTime
+  dataHoraAtualizacao DateTime
+  Motorista           Motorista? @relation(fields: [id_Motorista], references: [id_Motorista])
+  id_Motorista        String?
+}
+
+model Rota {
+  id_Rota         String    @id @default(uuid())
+  nome            String
+  origem          Json
+  destino         Json
+  duracao         Float
+  direcoes        Json
+  dataCriacao     DateTime
+  dataAtualizacao DateTime
+  Motorista       Motorista @relation(fields: [id_Motorista], references: [id_Motorista])
+  id_Motorista    String
+}
