@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-
+import { Exclude } from 'class-transformer';
 export class CreateAdminUserDto {
     @IsNotEmpty({ message: 'O campo "name" é obrigatório' })
     @ApiProperty({
@@ -9,6 +9,7 @@ export class CreateAdminUserDto {
         required: true
     })
     name: string;
+
     @IsEmail({}, { message: 'O campo "email" deve ser um e-mail válido' })
     @IsString({ message: 'O campo "email" deve ser uma string' })
     @IsNotEmpty({ message: 'O campo "email" é obrigatório' })
@@ -17,6 +18,8 @@ export class CreateAdminUserDto {
         example: 'teste@track.com',
     })
     email: string;
+
+    @Exclude({ toPlainOnly: true })
     @IsString({ message: 'O campo "password" deve ser uma string' })
     @IsNotEmpty({ message: 'O campo "password" é obrigatório' })
     @ApiProperty({
