@@ -41,3 +41,31 @@ class CpfValidator implements ValidatorConstraintInterface {
         return 'CPF inválido.';
     }
 }
+
+
+export function IsCnh(validationOptions?: ValidationOptions) {
+    return function (object: any, propertyName: string) {
+        registerDecorator({
+            name: 'isCnh',
+            target: object.constructor,
+            propertyName: propertyName,
+            options: validationOptions,
+            constraints: [],
+            validator: CnhValidator,
+        });
+    };
+}
+
+@ValidatorConstraint({ async: false })
+class CnhValidator implements ValidatorConstraintInterface {
+    validate(cnh: string, args: ValidationArguments) {
+        cnh = cnh.replace(/[^\d]+/g, '');
+        if (cnh.length !== 11 || /^(\d)\1+$/.test(cnh)) return false;
+
+        return true;
+    }
+
+    defaultMessage(args: ValidationArguments) {
+        return 'CNH inválida.';
+    }
+}
