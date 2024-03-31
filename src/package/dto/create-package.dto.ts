@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
+import { Localizacao } from "./associate-package-to-driver.dto";
 
 export class CreatePackageDto {
 
@@ -7,9 +8,12 @@ export class CreatePackageDto {
     @IsNotEmpty()
     @ApiProperty({
         description: 'Destino do pacote',
-        example: 'Rua dos bobos, numero 0'
+        example: {
+            latitude: '-23.5505199',
+            longitude: '-46.6333094'
+        }
     })
-    destino: string;
+    destino: Localizacao;
 
     @IsString()
     @IsNotEmpty()

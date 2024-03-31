@@ -7,6 +7,7 @@ import { TrackingStatus } from 'src/general/tracking-status/tracking-status.enum
 import { GetPackageDto } from './dto/get-package.dto';
 import { plainToInstance } from 'class-transformer';
 import { Errors } from 'src/general/errors/errors.enum';
+import { AssociatePackageToDriver } from './dto/associate-package-to-driver.dto';
 
 @Injectable()
 export class PackageService {
@@ -15,11 +16,22 @@ export class PackageService {
     private responseService: ResponseService
   ) { }
   async create(createPackageDto: CreatePackageDto) {
+    const customer = await this.prismaService.cliente.findUnique({
+      where: {
+        id_Cliente: createPackageDto.idCliente
+      }
+    });
+
+    if (!customer) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Cliente dono do pacote não cadastrado');
+    }
+
     const trackingCode = generateTrackingCode();
+
     return this.prismaService.entrega.create({
       data: {
         status: TrackingStatus.WAITING_FOR_PICKUP,
-        destino: createPackageDto.destino,
+        destino: JSON.stringify(createPackageDto.destino),
         codigoRastreio: trackingCode,
         Cliente: {
           connect: {
@@ -40,7 +52,7 @@ export class PackageService {
 
     return packages.map(pkg => plainToInstance(GetPackageDto, {
       id: pkg.id_Entrega,
-      origem: pkg.origem,
+      origem: typeof pkg.origem === 'string' ? JSON.parse(pkg.origem) : pkg.origem,
       destino: pkg.destino,
       status: pkg.status,
       codigo_Rastreio: pkg.codigoRastreio,
@@ -98,6 +110,71 @@ export class PackageService {
         email: pkg.Motorista.email,
       } : null,
       data_Entrega: pkg.dataHoraEntrega ? pkg.dataHoraEntrega : null,
+    });
+  }
+
+  async associateDriver(input: AssociatePackageToDriver) {
+    const driver = await this.prismaService.motorista.findUnique({
+      where: {
+        id_Motorista: input.idMotorista
+      }
+    });
+
+    if (!driver) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Motorista não encontrado');
+    }
+
+    const packages = [];
+    for (const id of input.packages_ids) {
+      const pkg = await this.prismaService.entrega.findUnique({
+        where: {
+          id_Entrega: id
+        }
+      });
+
+      if (!pkg) {
+        return this.responseService.throwHttpException(Errors.NOT_FOUND, `Pacote com id ${pkg.id_Entrega} não encontrado`);
+      }
+      const updatedPkg = await this.prismaService.entrega.update({
+        where: {
+          id_Entrega: id
+        },
+        data: {
+          origem: JSON.stringify(input.localizacao),
+          status: TrackingStatus.EN_ROUTE,
+          Motorista: {
+            connect: {
+              id_Motorista: input.idMotorista
+            }
+          }
+        }
+      });
+
+      packages.push(updatedPkg);
+    }
+
+    return packages;
+  }
+
+  async finishDelivery(id: string) {
+    const pkg = await this.prismaService.entrega.findUnique({
+      where: {
+        id_Entrega: id
+      }
+    });
+
+    if (!pkg) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Pacote não encontrado');
+    }
+
+    return this.prismaService.entrega.update({
+      where: {
+        id_Entrega: id
+      },
+      data: {
+        status: TrackingStatus.DELIVERED,
+        dataHoraEntrega: new Date()
+      }
     });
   }
 

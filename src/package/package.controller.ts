@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, ParseUUIDPipe } from '@nestjs/common';
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetPackageDto } from './dto/get-package.dto';
 import { ErrorResponse } from 'src/general/errors/errors.enum';
+import { AssociatePackageToDriver } from './dto/associate-package-to-driver.dto';
 
 @ApiTags('Pacotes')
 @Controller('package')
@@ -62,7 +63,7 @@ export class PackageController {
     description: 'Erro interno do servidor',
   })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.packageService.findOne(id);
   }
 
@@ -82,7 +83,59 @@ export class PackageController {
   })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.packageService.remove(id);
   }
+
+  @Patch('associate-driver')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    isArray: true,
+    type: GetPackageDto,
+    description: 'Associa pacotes a um motorista com sucesso.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: ErrorResponse,
+    description: 'Motorista ou pacote não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: ErrorResponse,
+    description: 'Erro na requisição',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    type: ErrorResponse,
+    description: 'Erro interno do servidor',
+  })
+  async associateDriver(@Body() input: AssociatePackageToDriver) {
+    return this.packageService.associateDriver(input);
+  }
+
+  @Patch(':id/finish-delivery')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Finaliza a entrega do pacote',
+    type: GetPackageDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: ErrorResponse,
+    description: 'Pacote não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: ErrorResponse,
+    description: 'Erro na requisição',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    type: ErrorResponse,
+    description: 'Erro interno do servidor',
+  })
+  async finishDelivery(@Param('id', ParseUUIDPipe) id: string) {
+    return this.packageService.finishDelivery(id);
+  }
+
 }

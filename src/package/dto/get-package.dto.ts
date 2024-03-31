@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Localizacao } from "./associate-package-to-driver.dto";
 
 export class GetPackageDto {
     @ApiProperty({
@@ -9,15 +10,21 @@ export class GetPackageDto {
 
     @ApiProperty({
         description: 'Origem do pacote',
-        example: 'Rua A, 123 - São Paulo'
+        example: {
+            latitude: '-23.5505199',
+            longitude: '-46.6333094'
+        }
     })
-    origem: string;
+    origem: Localizacao;
 
     @ApiProperty({
         description: 'Destino do pacote',
-        example: 'Rua B, 456 - São Paulo'
+        example: {
+            latitude: '-23.5505199',
+            longitude: '-46.6333094'
+        }
     })
-    destino: string;
+    destino: Localizacao;
 
     @ApiProperty({
         description: 'Status do pacote',
