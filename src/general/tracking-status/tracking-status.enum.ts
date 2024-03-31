@@ -1,0 +1,5 @@
+export enum TrackingStatus {
+    WAITING_FOR_PICKUP = 'ESPERANDO_RETIRADA',
+    EN_ROUTE = 'A_CAMINHO',
+    DELIVERED = 'ENTREGUE',
+}
