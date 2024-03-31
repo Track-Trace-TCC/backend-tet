@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, IsUUID, ValidateNested } from "class-validator";
 
-class Localizacao {
+export class Localizacao {
     @IsNotEmpty()
     @IsString()
     latitude: string;

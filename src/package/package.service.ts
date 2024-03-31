@@ -31,7 +31,7 @@ export class PackageService {
     return this.prismaService.entrega.create({
       data: {
         status: TrackingStatus.WAITING_FOR_PICKUP,
-        destino: createPackageDto.destino,
+        destino: JSON.stringify(createPackageDto.destino),
         codigoRastreio: trackingCode,
         Cliente: {
           connect: {
@@ -52,7 +52,7 @@ export class PackageService {
 
     return packages.map(pkg => plainToInstance(GetPackageDto, {
       id: pkg.id_Entrega,
-      origem: pkg.origem,
+      origem: typeof pkg.origem === 'string' ? JSON.parse(pkg.origem) : pkg.origem,
       destino: pkg.destino,
       status: pkg.status,
       codigo_Rastreio: pkg.codigoRastreio,
@@ -135,13 +135,12 @@ export class PackageService {
       if (!pkg) {
         return this.responseService.throwHttpException(Errors.NOT_FOUND, `Pacote com id ${pkg.id_Entrega} não encontrado`);
       }
-
       const updatedPkg = await this.prismaService.entrega.update({
         where: {
           id_Entrega: id
         },
         data: {
-          origem: driver.localizacaoAtual,
+          origem: JSON.stringify(input.localizacao),
           status: TrackingStatus.EN_ROUTE,
           Motorista: {
             connect: {
@@ -155,6 +154,28 @@ export class PackageService {
     }
 
     return packages;
+  }
+
+  async finishDelivery(id: string) {
+    const pkg = await this.prismaService.entrega.findUnique({
+      where: {
+        id_Entrega: id
+      }
+    });
+
+    if (!pkg) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Pacote não encontrado');
+    }
+
+    return this.prismaService.entrega.update({
+      where: {
+        id_Entrega: id
+      },
+      data: {
+        status: TrackingStatus.DELIVERED,
+        dataHoraEntrega: new Date()
+      }
+    });
   }
 
   async remove(id: string) {
