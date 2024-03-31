@@ -4,6 +4,7 @@ import { CreatePackageDto } from './dto/create-package.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetPackageDto } from './dto/get-package.dto';
 import { ErrorResponse } from 'src/general/errors/errors.enum';
+import { AssociatePackageToDriver } from './dto/associate-package-to-driver.dto';
 
 @ApiTags('Pacotes')
 @Controller('package')
@@ -84,5 +85,31 @@ export class PackageController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.packageService.remove(id);
+  }
+
+  @Patch('associate-driver')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    isArray: true,
+    type: GetPackageDto,
+    description: 'Associa pacotes a um motorista com sucesso.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: ErrorResponse,
+    description: 'Motorista ou pacote não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: ErrorResponse,
+    description: 'Erro na requisição',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    type: ErrorResponse,
+    description: 'Erro interno do servidor',
+  })
+  async associateDriver(@Body() input: AssociatePackageToDriver) {
+    return this.packageService.associateDriver(input);
   }
 }
