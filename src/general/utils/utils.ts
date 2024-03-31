@@ -69,3 +69,16 @@ class CnhValidator implements ValidatorConstraintInterface {
         return 'CNH inválida.';
     }
 }
+
+export function generateTrackingCode(): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 16; i++) {
+        const randomValue = crypto.getRandomValues(new Uint8Array(1))[0];
+        result += characters.charAt(randomValue % charactersLength);
+    }
+    return result;
+}
+
+

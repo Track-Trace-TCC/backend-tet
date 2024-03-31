@@ -45,11 +45,13 @@ model Entrega {
   id_Entrega          String     @id @default(uuid())
   Cliente             Cliente    @relation(fields: [id_Cliente], references: [id_Cliente])
   id_Cliente          String
-  origem              Json
+  origem              Json?
   destino             Json
+  codigoRastreio      String
   status              String
-  dataHoraCriacao     DateTime
-  dataHoraAtualizacao DateTime
+  dataHoraCriacao     DateTime   @default(now())
+  dataHoraAtualizacao DateTime   @updatedAt
+  dataHoraEntrega     DateTime?
   Motorista           Motorista? @relation(fields: [id_Motorista], references: [id_Motorista])
   id_Motorista        String?
 }
