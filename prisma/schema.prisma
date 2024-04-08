@@ -61,10 +61,11 @@ model Rota {
   nome            String
   origem          Json
   destino         Json
+  status          String
   duracao         Float
   direcoes        Json
-  dataCriacao     DateTime
-  dataAtualizacao DateTime
+  dataCriacao     DateTime  @default(now())
+  dataAtualizacao DateTime  @updatedAt
   Motorista       Motorista @relation(fields: [id_Motorista], references: [id_Motorista])
   id_Motorista    String
 }
