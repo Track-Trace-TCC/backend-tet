@@ -10,9 +10,26 @@ import { PackageModule } from './package/package.module';
 import { RoutesModule } from './routes/routes.module';
 import { MapsModule } from './maps/maps.module';
 import { ConfigModule } from '@nestjs/config';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
-  imports: [PrismaModule, AdminUsersModule, GeneralModule, CustomersModule, DriversModule, PackageModule, RoutesModule, MapsModule, ConfigModule.forRoot({ isGlobal: true }),],
+  imports: [
+    PrismaModule,
+    AdminUsersModule,
+    GeneralModule,
+    CustomersModule,
+    DriversModule,
+    PackageModule,
+    RoutesModule,
+    MapsModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    BullModule.forRoot({
+      redis: {
+        host: 'redis',
+        port: 6379,
+      }
+    }),
+  ],
   providers: [AppService],
 })
 export class AppModule {
