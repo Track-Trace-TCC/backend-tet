@@ -51,9 +51,43 @@ export class RoutesController {
     return this.routesService.findOne(id);
   }
 
-  @Patch('finish/:id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Atualiza uma rota',
+    type: GetRouteDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Rota não encontrada',
+    type: ErrorResponse
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Erro interno do servidor',
+    type: ErrorResponse
+  })
   finish(@Param('id') id: string) {
     return this.routesService.finishRoute(id);
   }
 
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Retorna a rota ativa de um motorista',
+    type: GetRouteDto
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Rota não encontrada',
+    type: ErrorResponse
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Erro interno do servidor',
+    type: ErrorResponse
+  })
+  @Get('active/:driverId')
+  getActiveRouteByDriverId(@Param('driverId') driverId: string) {
+    return this.routesService.getActiveRouteByDriverId(driverId);
+  }
 }

@@ -6,12 +6,15 @@ import { DirectionsService } from 'src/maps/directions/directions.service';
 import { RouteStatus } from 'src/general/route-status/route-status.enum';
 import { GetRouteDto } from './dto/get-route.dto';
 import { plainToInstance } from 'class-transformer';
+import { ResponseService } from 'src/general/response/response.service';
+import { Errors } from 'src/general/errors/errors.enum';
 
 @Injectable()
 export class RoutesService {
   constructor(
     private prismaService: PrismaService,
     private directionsService: DirectionsService,
+    private responseService: ResponseService
   ) { }
   async create(createRouteDto: CreateRouteDto) {
     const { available_travel_modes, geocoded_waypoints, routes, request } = await this.directionsService.getDirections(createRouteDto);
@@ -72,6 +75,31 @@ export class RoutesService {
       data: {
         status: RouteStatus.FINISHED
       }
+    });
+  }
+
+  async getActiveRouteByDriverId(id: string) {
+    const route = await this.prismaService.rota.findFirst({
+      where: {
+        Motorista: {
+          id_Motorista: id
+        },
+        status: RouteStatus.IN_TRANSIT
+      }
+    });
+
+    if (!route) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Rota não encontrada');
+    }
+
+    return plainToInstance(GetRouteDto, {
+      name: route.nome,
+      id: route.id_Rota,
+      source: route.origem,
+      destination: route.destino,
+      duration: route.duracao,
+      status: route.status,
+      directions: typeof route.direcoes === 'string' ? JSON.parse(route.direcoes) : route.direcoes,
     });
   }
 
