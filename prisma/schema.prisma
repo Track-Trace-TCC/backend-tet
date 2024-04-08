@@ -28,6 +28,7 @@ model Motorista {
   nome             String
   cnh              String
   email            String
+  senha            String
   telefone         String
   localizacaoAtual Json
   Entregas         Entrega[]

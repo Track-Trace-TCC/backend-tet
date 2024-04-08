@@ -10,6 +10,13 @@ async function bootstrap() {
     .setTitle('Track & Trace API')
     .setDescription('Esta pagina consiste em todas as rotas da API com seus devidos exemplos e atributos')
     .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, UseGuards } from '@nestjs/common';
 import { DriversService } from './drivers.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetDriverDTO } from './dto/get-driver.dto';
 import { ErrorResponse } from 'src/general/errors/errors.enum';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Motoristas')
 @Controller('drivers')
@@ -37,6 +40,9 @@ export class DriversController {
     type: ErrorResponse,
   })
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   create(@Body() createDriverDto: CreateDriverDto) {
     return this.driversService.create(createDriverDto);
   }
@@ -53,6 +59,9 @@ export class DriversController {
     description: 'Erro interno do servidor',
   })
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   findAll() {
     return this.driversService.findAll();
   }
@@ -74,6 +83,9 @@ export class DriversController {
     type: ErrorResponse,
   })
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   findOne(@Param('id') id: string) {
     return this.driversService.findOne(id);
   }
@@ -104,6 +116,9 @@ export class DriversController {
     type: ErrorResponse,
   })
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   update(@Param('id') id: string, @Body() updateDriverDto: UpdateDriverDto) {
     return this.driversService.update(id, updateDriverDto);
   }
@@ -123,6 +138,9 @@ export class DriversController {
     type: ErrorResponse,
   })
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.driversService.remove(id);

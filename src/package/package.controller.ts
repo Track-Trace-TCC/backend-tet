@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { PackageService } from './package.service';
 import { CreatePackageDto } from './dto/create-package.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetPackageDto } from './dto/get-package.dto';
 import { ErrorResponse } from 'src/general/errors/errors.enum';
 import { AssociatePackageToDriver } from './dto/associate-package-to-driver.dto';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Pacotes')
 @Controller('package')
@@ -27,6 +30,9 @@ export class PackageController {
     type: ErrorResponse,
   })
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   create(@Body() createPackageDto: CreatePackageDto) {
     return this.packageService.create(createPackageDto);
   }
@@ -43,6 +49,9 @@ export class PackageController {
     description: 'Erro interno do servidor',
   })
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   findAll() {
     return this.packageService.findAll();
   }
@@ -63,6 +72,9 @@ export class PackageController {
     description: 'Erro interno do servidor',
   })
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.packageService.findOne(id);
   }
@@ -109,11 +121,17 @@ export class PackageController {
     type: ErrorResponse,
     description: 'Erro interno do servidor',
   })
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('driver')
+  @ApiBearerAuth('access-token')
   async associateDriver(@Body() input: AssociatePackageToDriver) {
     return this.packageService.associateDriver(input);
   }
 
   @Patch(':id/finish-delivery')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('driver')
+  @ApiBearerAuth('access-token')
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Finaliza a entrega do pacote',

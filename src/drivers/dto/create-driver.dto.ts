@@ -33,6 +33,14 @@ export class CreateDriverDto {
 
     @IsString()
     @IsNotEmpty()
+    @ApiProperty({
+        description: 'Senha do motorista',
+        example: '123456'
+    })
+    password: string;
+
+    @IsString()
+    @IsNotEmpty()
     @IsPhoneNumber('BR')
     @ApiProperty({
         description: 'Telefone do motorista',

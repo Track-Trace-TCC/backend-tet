@@ -11,6 +11,7 @@ import { RoutesModule } from './routes/routes.module';
 import { MapsModule } from './maps/maps.module';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { BullModule } from '@nestjs/bull';
         port: 6379,
       }
     }),
+    AuthModule,
   ],
   providers: [AppService],
 })
