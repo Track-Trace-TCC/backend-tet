@@ -118,6 +118,29 @@ export class DriversService {
     });
   }
 
+  async updateDriverLocation(id: string, lat: number, lng: number) {
+    const driver = await this.prismaService.motorista.findUnique({
+      where: {
+        id_Motorista: id
+      }
+    });
+
+    if (!driver) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Motorista não encontrado');
+    }
+
+    return this.prismaService.motorista.update({
+      where: {
+        id_Motorista: id
+      },
+      data: {
+        localizacaoAtual: {
+          lat,
+          lng,
+        },
+      }
+    });
+  }
   remove(id: string) {
     const driver = this.prismaService.motorista.findUnique({
       where: {
