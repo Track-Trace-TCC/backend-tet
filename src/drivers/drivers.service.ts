@@ -6,7 +6,7 @@ import { ResponseService } from 'src/general/response/response.service';
 import { Errors } from 'src/general/errors/errors.enum';
 import { GetDriverDTO } from './dto/get-driver.dto';
 import { plainToInstance } from 'class-transformer';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class DriversService {
   constructor(
@@ -32,10 +32,12 @@ export class DriversService {
       }
     }
 
+    createDriverDto.password = await bcrypt.hash(createDriverDto.password, 10);
     return this.prismaService.motorista.create({
       data: {
         nome: createDriverDto.nome,
         email: createDriverDto.email,
+        senha: createDriverDto.password,
         cnh: createDriverDto.cnh,
         telefone: createDriverDto.telefone,
         localizacaoAtual: {}

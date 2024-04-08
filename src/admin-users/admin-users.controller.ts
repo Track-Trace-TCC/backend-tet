@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, ParseUUIDPipe, HttpCode, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, ParseUUIDPipe, HttpCode, Res, UseGuards } from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { GetAdminUserDto, GetByIDDTO } from './dto/get-admin-user.dto';
 import { ErrorResponse, Errors } from 'src/general/errors/errors.enum';
 import { ResponseService } from 'src/general/response/response.service';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Usuários Administradores')
 @Controller('admin-users')
@@ -30,6 +33,9 @@ export class AdminUsersController {
     description: 'Email já cadastrado',
   })
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   async create(@Body() createAdminUserDto: CreateAdminUserDto) {
     try {
       const response = await this.adminUsersService.create(createAdminUserDto);
@@ -40,6 +46,9 @@ export class AdminUsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Retorna todos os usuários administradores cadastrados',
@@ -75,6 +84,9 @@ export class AdminUsersController {
     description: 'Erro interno do servidor',
   })
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return this.adminUsersService.findOne(id);
@@ -109,6 +121,9 @@ export class AdminUsersController {
     description: 'Erro interno do servidor',
   })
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAdminUserDto: UpdateAdminUserDto) {
     return this.adminUsersService.update(id, updateAdminUserDto);
   }
@@ -128,6 +143,9 @@ export class AdminUsersController {
     description: 'Erro interno do servidor',
   })
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth('access-token')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
