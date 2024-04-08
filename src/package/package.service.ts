@@ -42,6 +42,25 @@ export class PackageService {
     });
   }
 
+  async getByTrackCodeAndCpf(trackCode: string, cpf: string) {
+    const currentPackage = await this.prismaService.entrega.findFirst({
+      where: {
+        Cliente: {
+          cpf
+        },
+        codigoRastreio: trackCode,
+      },
+      include: {
+        Motorista: true
+      }
+    });
+    if (!currentPackage) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Pacote não encontrado');
+    }
+
+    return currentPackage;
+  }
+
   async findAll(): Promise<GetPackageDto[]> {
     const packages = await this.prismaService.entrega.findMany({
       include: {

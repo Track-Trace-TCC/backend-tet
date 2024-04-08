@@ -138,4 +138,23 @@ export class PackageController {
     return this.packageService.finishDelivery(id);
   }
 
+  @Get('/track-code/:code/cpf/:cpf')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Retorna o status do pacote',
+    type: GetPackageDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: ErrorResponse,
+    description: 'Pacote não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: ErrorResponse,
+    description: 'Erro na requisição',
+  })
+  async getByTrackCodeAndCpf(@Param('code') code: string, @Param('cpf') cpf: string) {
+    return this.packageService.getByTrackCodeAndCpf(code, cpf);
+  }
 }
