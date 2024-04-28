@@ -7,6 +7,7 @@ import { Errors } from 'src/general/errors/errors.enum';
 import { GetDriverDTO } from './dto/get-driver.dto';
 import { plainToInstance } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 @Injectable()
 export class DriversService {
   constructor(
@@ -45,8 +46,23 @@ export class DriversService {
     });
   }
 
-  async findAll(): Promise<GetDriverDTO[]> {
-    const drivers = await this.prismaService.motorista.findMany();
+  async findAll(search?: string): Promise<GetDriverDTO[]> {
+    let whereCondition: Prisma.MotoristaWhereInput = {};
+    if (search) {
+      whereCondition = {
+        OR: [
+          { id_Motorista: { equals: search } },
+          { nome: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { cnh: { contains: search, mode: 'insensitive' } },
+          { telefone: { contains: search, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    const drivers = await this.prismaService.motorista.findMany({
+      where: whereCondition,
+    });
 
 
     return drivers.map(driver => plainToInstance(GetDriverDTO, {
@@ -91,7 +107,7 @@ export class DriversService {
       this.responseService.throwHttpException(Errors.NOT_FOUND, 'Motorista não encontrado');
     }
 
-    if (updateDriverDto.email) {
+    if (updateDriverDto.email && updateDriverDto.email !== driver.email) {
       const driver = this.prismaService.motorista.findFirst({
         where: {
           email: updateDriverDto.email

@@ -8,6 +8,9 @@ import { GetPackageDto } from './dto/get-package.dto';
 import { plainToInstance } from 'class-transformer';
 import { Errors } from 'src/general/errors/errors.enum';
 import { AssociatePackageToDriver } from './dto/associate-package-to-driver.dto';
+import { Prisma } from '@prisma/client';
+
+
 
 @Injectable()
 export class PackageService {
@@ -15,6 +18,7 @@ export class PackageService {
     private prismaService: PrismaService,
     private responseService: ResponseService
   ) { }
+
   async create(createPackageDto: CreatePackageDto) {
     const customer = await this.prismaService.cliente.findUnique({
       where: {
@@ -61,8 +65,27 @@ export class PackageService {
     return currentPackage;
   }
 
-  async findAll(): Promise<GetPackageDto[]> {
+  async findAll(search?: string): Promise<GetPackageDto[]> {
+    let whereCondition: Prisma.EntregaWhereInput = {};
+    if (search) {
+      whereCondition = {
+        OR: [
+          { id_Entrega: { equals: search } },
+          { codigoRastreio: { contains: search, mode: 'insensitive' } },
+          {
+            Cliente: {
+              nome: {
+                contains: search,
+                mode: 'insensitive'
+              }
+            }
+          },
+        ],
+      };
+    }
+
     const packages = await this.prismaService.entrega.findMany({
+      where: whereCondition,
       include: {
         Cliente: true,
         Motorista: true

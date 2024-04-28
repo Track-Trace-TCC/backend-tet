@@ -4,7 +4,6 @@ import { Localizacao } from "./associate-package-to-driver.dto";
 
 export class CreatePackageDto {
 
-    @IsString()
     @IsNotEmpty()
     @ApiProperty({
         description: 'Destino do pacote',
@@ -15,7 +14,6 @@ export class CreatePackageDto {
     })
     destino: Localizacao;
 
-    @IsString()
     @IsNotEmpty()
     @ApiProperty({
         description: 'Identificador do cliente dono do pacote',
