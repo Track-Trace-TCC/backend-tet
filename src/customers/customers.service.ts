@@ -7,6 +7,7 @@ import { Errors } from 'src/general/errors/errors.enum';
 import e from 'express';
 import { GetCustomerDTO } from './dto/get-customer.dto';
 import { plainToInstance } from 'class-transformer';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CustomersService {
@@ -42,8 +43,23 @@ export class CustomersService {
     });
   }
 
-  async findAll(): Promise<GetCustomerDTO[]> {
-    const customers = await this.prismaService.cliente.findMany();
+  async findAll(search?: string): Promise<GetCustomerDTO[]> {
+    let whereCondition: Prisma.ClienteWhereInput = {};
+    if (search) {
+      whereCondition = {
+        OR: [
+          { id_Cliente: { equals: search } },
+          { nome: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { cpf: { contains: search, mode: 'insensitive' } },
+          { telefone: { contains: search, mode: 'insensitive' } },
+        ],
+      };
+    }
+
+    const customers = await this.prismaService.cliente.findMany({
+      where: whereCondition,
+    });
 
     return customers.map(customer => plainToInstance(GetCustomerDTO, {
       id: customer.id_Cliente,
@@ -86,7 +102,7 @@ export class CustomersService {
       this.responseService.throwHttpException(Errors.NOT_FOUND, 'Cliente não encontrado');
     }
 
-    if (updateCustomerDto.email) {
+    if (updateCustomerDto.email && updateCustomerDto.email !== customer.email) {
       const customer = await this.prismaService.cliente.findFirst({
         where: {
           email: updateCustomerDto.email
@@ -98,7 +114,7 @@ export class CustomersService {
       }
     }
 
-    if (updateCustomerDto.cpf) {
+    if (updateCustomerDto.cpf && updateCustomerDto.cpf !== customer.cpf) {
       const customer = await this.prismaService.cliente.findFirst({
         where: {
           cpf: updateCustomerDto.cpf

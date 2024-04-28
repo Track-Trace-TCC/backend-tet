@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, ParseUUIDPipe, HttpCode, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, ParseUUIDPipe, HttpCode, Res, UseGuards, Query } from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
@@ -60,9 +60,9 @@ export class AdminUsersController {
     type: ErrorResponse,
     description: 'Erro interno do servidor',
   })
-  findAll(): Promise<GetAdminUserDto[]> {
+  findAll(@Query('search') search?: string): Promise<GetAdminUserDto[]> {
     try {
-      return this.adminUsersService.findAll();
+      return this.adminUsersService.findAll(search);
     } catch (error) {
       this.responseService.throwHttpException(Errors.INTERNAL_ERROR, error.message);
     }

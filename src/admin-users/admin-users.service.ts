@@ -7,6 +7,7 @@ import { ResponseService } from 'src/general/response/response.service';
 import * as bcrypt from 'bcrypt';
 import { GetAdminUserDto } from './dto/get-admin-user.dto';
 import { plainToInstance } from 'class-transformer';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AdminUsersService {
@@ -43,8 +44,19 @@ export class AdminUsersService {
     })
   }
 
-  async findAll(): Promise<GetAdminUserDto[]> {
+  async findAll(search?: string): Promise<GetAdminUserDto[]> {
+    let whereCondition: Prisma.UsuarioAdministradorWhereInput = {};
+    if (search) {
+      whereCondition = {
+        OR: [
+          { id_Admin: { equals: search } },
+          { nome: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+        ],
+      };
+    }
     const adminUsers = await this.prismaService.usuarioAdministrador.findMany({
+      where: whereCondition,
       select: {
         id_Admin: true,
         email: true,
@@ -93,7 +105,7 @@ export class AdminUsersService {
       this.responseService.throwHttpException(Errors.NOT_FOUND, 'Usuário não encontrado');
     }
 
-    if (updateAdminUserDto.email != null) {
+    if (updateAdminUserDto.email != null && adminUser.email != updateAdminUserDto.email) {
       const isExists = await this.prismaService.usuarioAdministrador.findMany(
         {
           where: {

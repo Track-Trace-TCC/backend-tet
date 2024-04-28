@@ -14,7 +14,7 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    async validateAdminUser(authDto: AuthDTO): Promise<{ access_token: string }> {
+    async validateAdminUser(authDto: AuthDTO): Promise<{ access_token: string, name: string }> {
         const user = await this.prismaService.usuarioAdministrador.findFirst({
             where: {
                 email: authDto.email,
@@ -30,10 +30,10 @@ export class AuthService {
             this.responseService.throwHttpException(Errors.UNAUTHORIZED, 'Senha incorreta');
         }
 
-        const payload = { email: user.email, sub: user.id_Admin, role: 'admin' };
+        const payload = { email: user.email, name: user.nome, sub: user.id_Admin, role: 'admin' };
         const access_token = this.jwtService.sign(payload);
 
-        return { access_token };
+        return { access_token: access_token, name: user.nome };
     }
 
     async validateDriverUser(authDto: AuthDTO): Promise<{ access_token: string }> {
