@@ -52,9 +52,9 @@ export class RoutesController {
     description: 'Erro interno do servidor',
     type: ErrorResponse
   })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('driver')
-  @ApiBearerAuth('access-token')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles('driver')
+  // @ApiBearerAuth('access-token')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.routesService.findOne(id);

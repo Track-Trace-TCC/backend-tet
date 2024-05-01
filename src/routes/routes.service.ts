@@ -107,6 +107,9 @@ export class RoutesService {
     const route = await this.prismaService.rota.findUnique({
       where: {
         id_Rota: id
+      },
+      include: {
+        Motorista: true
       }
     });
 
@@ -115,6 +118,7 @@ export class RoutesService {
       id: route.id_Rota,
       source: route.origem,
       destination: route.destino,
+      motorista: route.Motorista,
       duration: route.duracao,
       status: route.status,
       directions: typeof route.direcoes === 'string' ? JSON.parse(route.direcoes) : route.direcoes,
