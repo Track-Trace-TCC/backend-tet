@@ -12,6 +12,7 @@ import { MapsModule } from './maps/maps.module';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { AuthModule } from './auth/auth.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './auth/auth.module';
       }
     }),
     AuthModule,
+    ReportsModule,
   ],
   providers: [AppService],
 })
