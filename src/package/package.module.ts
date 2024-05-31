@@ -6,4 +6,4 @@ import { PackageController } from './package.controller';
   controllers: [PackageController],
   providers: [PackageService],
 })
-export class PackageModule {}
+export class PackageModule { }

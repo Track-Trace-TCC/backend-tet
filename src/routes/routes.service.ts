@@ -80,10 +80,14 @@ export class RoutesService {
 
   async getActiveRouteByDriverId(id: string) {
     const route = await this.prismaService.rota.findFirst({
+      include: {
+        Motorista: true
+      },
       where: {
         Motorista: {
           id_Motorista: id
         },
+
         status: RouteStatus.IN_TRANSIT
       }
     });
@@ -99,6 +103,7 @@ export class RoutesService {
       destination: route.destino,
       duration: route.duracao,
       status: route.status,
+      motorista: route.Motorista,
       directions: typeof route.direcoes === 'string' ? JSON.parse(route.direcoes) : route.direcoes,
     });
   }
@@ -124,4 +129,6 @@ export class RoutesService {
       directions: typeof route.direcoes === 'string' ? JSON.parse(route.direcoes) : route.direcoes,
     });
   }
+
+
 }

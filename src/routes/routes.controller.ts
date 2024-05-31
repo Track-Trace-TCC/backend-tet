@@ -78,6 +78,7 @@ export class RoutesController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('driver')
   @ApiBearerAuth('access-token')
+  @Patch(':id')
   finish(@Param('id') id: string) {
     return this.routesService.finishRoute(id);
   }

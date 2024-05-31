@@ -184,6 +184,11 @@ export class PackageService {
         data: {
           origem: JSON.stringify(input.localizacao),
           status: TrackingStatus.EN_ROUTE,
+          Rota: {
+            connect: {
+              id_Rota: input.route_id
+            }
+          },
           Motorista: {
             connect: {
               id_Motorista: input.idMotorista
@@ -236,5 +241,55 @@ export class PackageService {
         id_Entrega: id
       }
     });
+  }
+
+  async getInTransitByDriverId(driverId: string, route_id: string) {
+    const driver = await this.prismaService.motorista.findUnique({
+      where: {
+        id_Motorista: driverId
+      }
+    });
+
+    if (!driver) {
+      this.responseService.throwHttpException(Errors.NOT_FOUND, 'Motorista não encontrado');
+    }
+
+    const packages = await this.prismaService.entrega.findMany({
+      include: {
+        Cliente: true,
+        Motorista: true
+      },
+      where: {
+        Motorista: {
+          id_Motorista: driverId
+        },
+        Rota: {
+          id_Rota: route_id
+        },
+      }
+    });
+
+    return packages.map(pkg => plainToInstance(GetPackageDto, {
+      id: pkg.id_Entrega,
+      origem: pkg.origem,
+      destino: pkg.destino,
+      status: pkg.status,
+      codigo_Rastreio: pkg.codigoRastreio,
+      data_Criacao: pkg.dataHoraCriacao,
+      data_Atualizacao: pkg.dataHoraAtualizacao,
+      motorista: {
+        id: driver.id_Motorista,
+        nome: driver.nome,
+        cnh: driver.cnh,
+        email: driver.email,
+      },
+      cliente: {
+        id: pkg.Cliente.id_Cliente,
+        nome: pkg.Cliente.nome,
+        cpf: pkg.Cliente.cpf,
+        email: pkg.Cliente.email,
+      },
+      data_Entrega: pkg.dataHoraEntrega ? pkg.dataHoraEntrega : null,
+    }));
   }
 }

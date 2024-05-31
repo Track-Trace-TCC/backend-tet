@@ -4,27 +4,27 @@ import { IsArray, IsLatitude, IsLongitude, IsNotEmpty, IsString, IsUUID, Validat
 
 class LocationDto {
     @ApiProperty({ example: '-23.550520', description: 'Latitude' })
-    @IsLatitude()
-    @IsNotEmpty()
+    @IsLatitude({ message: 'Latitude inválida' })
+    @IsNotEmpty({ message: 'Latitude não pode ser vazia' })
     lat: string;
 
     @ApiProperty({ example: '-46.633308', description: 'Longitude' })
-    @IsLongitude()
-    @IsNotEmpty()
+    @IsLongitude({ message: 'Longitude inválida' })
+    @IsNotEmpty({ message: 'Longitude não pode ser vazia' })
     lng: string;
 }
 
 export class CreateRouteDto {
-    @IsString()
-    @IsUUID()
-    @IsNotEmpty()
+    @IsString({ message: 'ID do motorista deve ser uma string' })
+    @IsUUID('4', { message: 'ID do motorista deve ser um UUID válido' })
+    @IsNotEmpty({ message: 'ID do motorista não pode ser vazio' })
     @ApiProperty({
         description: 'ID do motorista',
         example: '123e4567-e89b-12d3-a456-426614174000',
     })
     idMotorista: string;
 
-    @ValidateNested()
+    @ValidateNested({ each: true })
     @Type(() => LocationDto)
     @ApiProperty({
         description: 'Localização de origem',
@@ -32,7 +32,7 @@ export class CreateRouteDto {
     })
     origem: LocationDto;
 
-    @IsArray()
+    @IsArray({ message: 'Destinos deve ser um array' })
     @ValidateNested({ each: true })
     @Type(() => LocationDto)
     @ApiProperty({

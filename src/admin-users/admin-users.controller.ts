@@ -33,9 +33,9 @@ export class AdminUsersController {
     description: 'Email já cadastrado',
   })
   @Post()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('admin')
-  @ApiBearerAuth('access-token')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles('admin')
+  // @ApiBearerAuth('access-token')
   async create(@Body() createAdminUserDto: CreateAdminUserDto) {
     try {
       const response = await this.adminUsersService.create(createAdminUserDto);

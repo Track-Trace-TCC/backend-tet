@@ -73,7 +73,7 @@ export class PackageController {
   })
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles('admin')
+  @Roles('driver')
   @ApiBearerAuth('access-token')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.packageService.findOne(id);
@@ -177,5 +177,34 @@ export class PackageController {
   })
   async getByTrackCodeAndCpf(@Param('code') code: string, @Param('cpf') cpf: string) {
     return this.packageService.getByTrackCodeAndCpf(code, cpf);
+  }
+
+  @Get('/driver/:id/route/:routeId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('driver')
+  @ApiBearerAuth('access-token')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Retorna os pacotes associados ao motorista',
+    type: GetPackageDto,
+    isArray: true,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: ErrorResponse,
+    description: 'Motorista não encontrado',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    type: ErrorResponse,
+    description: 'Erro na requisição',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    type: ErrorResponse,
+    description: 'Erro interno do servidor',
+  })
+  async getInTransitByDriverId(@Param('id', ParseUUIDPipe) driverId: string, @Param('routeId', ParseUUIDPipe) routeId: string) {
+    return this.packageService.getInTransitByDriverId(driverId, routeId);
   }
 }

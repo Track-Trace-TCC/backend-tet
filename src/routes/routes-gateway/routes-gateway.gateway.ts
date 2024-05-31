@@ -16,6 +16,7 @@ export class RoutesGateway {
   async handleMessage(client: Socket, payload: {
     route_id: string; driver_id: string; lat: number; lng: number
   }) {
+    console.log('oiiii vinicius')
     client.broadcast.emit('admin-new-points', payload);
     client.broadcast.emit(`new-points/${payload.driver_id}`, payload);
 

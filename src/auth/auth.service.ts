@@ -36,7 +36,7 @@ export class AuthService {
         return { access_token: access_token, name: user.nome };
     }
 
-    async validateDriverUser(authDto: AuthDTO): Promise<{ access_token: string }> {
+    async validateDriverUser(authDto: AuthDTO): Promise<{ access_token: string, name: string, id: string }> {
         const user = await this.prismaService.motorista.findFirst({
             where: {
                 email: authDto.email,
@@ -55,6 +55,6 @@ export class AuthService {
         const payload = { email: user.email, sub: user.id_Motorista, role: 'driver' };
         const access_token = this.jwtService.sign(payload);
 
-        return { access_token };
+        return { access_token: access_token, name: user.nome, id: user.id_Motorista };
     }
 }

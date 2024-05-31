@@ -3,7 +3,7 @@ import { IsEmail, IsString } from "class-validator";
 
 export class AuthDTO {
     @IsString()
-    @IsEmail()
+    @IsEmail({}, { message: 'O campo "email" deve ser um e-mail válido' })
     @ApiProperty({
         description: 'Email do usuário',
         example: 'teste@track.com'
