@@ -38,8 +38,8 @@ Siga os passos abaixo para configurar e executar o backend localmente.
 1. Clone o repositório:
 
     ```bash
-    git clone https://github.com/Track-Trace-TCC/backend.git
-    cd backend
+    git clone https://github.com/Track-Trace-TCC/backend-tet
+    cd backend-tet
     ```
 
 2. Instale as dependências:
