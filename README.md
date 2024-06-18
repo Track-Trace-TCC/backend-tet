@@ -1,73 +1,92 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Backend de Rastreamento e Gestão de Entregas
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este é o backend do sistema de rastreamento e gestão de entregas, desenvolvido em [NestJS](https://nestjs.com/) e [TypeScript](https://www.typescriptlang.org/). Ele gerencia operações de CRUD para motoristas, administradores, pacotes, clientes e rotas. O sistema utiliza comunicação HTTP e WebSocket, e possui integração com PostgreSQL. O backend é completamente dockerizado.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Pré-requisitos
 
-## Description
+Antes de iniciar o projeto, você precisa configurar algumas variáveis de ambiente que são essenciais para o funcionamento do sistema.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Variáveis de Ambiente Necessárias
 
-## Installation
+- `DATABASE_URL_DOCKER`: URL para o banco de dados quando o serviço está em execução dentro de um contêiner Docker.
+- `DATABASE_URL_LOCAL`: URL para o banco de dados quando o serviço está em execução localmente.
+- `GOOGLE_MAPS_API_KEY`: Chave de API para o Google Maps.
+- `JWT_SECRET_DRIVER`: Chave secreta para geração de tokens JWT para motoristas.
+- `JWT_SECRET_ADMIN`: Chave secreta para geração de tokens JWT para administradores.
+- `JWT_SECRET`: Chave secreta geral para geração de tokens JWT.
 
-```bash
-$ npm install
-```
+### Como Configurar as Variáveis de Ambiente
 
-## Running the app
+1. Crie um arquivo `.env` na raiz do projeto.
+2. Adicione as seguintes linhas ao arquivo `.env` com os valores apropriados:
 
-```bash
-# development
-$ npm run start
+    ```plaintext
+    DATABASE_URL_DOCKER="URL TO DATABASE IN DOCKER"
+    DATABASE_URL_LOCAL="URL TO DATABASE IN LOCAL"
+    GOOGLE_MAPS_API_KEY="API KEY TO GOOGLE MAPS"
+    JWT_SECRET_DRIVER="YOUR SECRET"
+    JWT_SECRET_ADMIN="YOUR SECRET"
+    JWT_SECRET="YOUR SECRET"
+    ```
 
-# watch mode
-$ npm run start:dev
+3. Substitua os valores de exemplo com os dados reais do seu ambiente.
 
-# production mode
-$ npm run start:prod
-```
+## Instalação
 
-## Test
+Siga os passos abaixo para configurar e executar o backend localmente.
 
-```bash
-# unit tests
-$ npm run test
+1. Clone o repositório:
 
-# e2e tests
-$ npm run test:e2e
+    ```bash
+    git clone https://github.com/Track-Trace-TCC/backend.git
+    cd backend
+    ```
 
-# test coverage
-$ npm run test:cov
-```
+2. Instale as dependências:
 
-## Support
+    ```bash
+    npm install
+    ```
+3. Se você está usando Docker, inicie o serviço com:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    ```bash
+    docker-compose up
+    ```
 
-## Stay in touch
+## Funcionalidades
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- CRUD de motoristas, administradores, pacotes, clientes e rotas.
+- Comunicação em tempo real via WebSocket.
+- Integração com Google Maps para cálculos de rotas e localização.
+- Autenticação baseada em JWT para diferentes tipos de usuários.
 
-## License
+## Tecnologias Utilizadas
 
-Nest is [MIT licensed](LICENSE).
+- [NestJS](https://nestjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
+- [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- [Google Maps API](https://developers.google.com/maps/documentation/javascript/overview)
+
+## Contribuição
+
+Se você deseja contribuir com este projeto, siga os passos abaixo:
+
+1. Faça um fork do projeto.
+2. Crie uma nova branch (`git checkout -b feature/nova-feature`).
+3. Commit suas mudanças (`git commit -am 'Adicione uma nova feature'`).
+4. Faça o push para a branch (`git push origin feature/nova-feature`).
+5. Abra um Pull Request.
+
+## Contato
+
+Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato:
+
+- **Nome**: Vinícius
+- **Email**: viniciusataides@gmail.com
+- **GitHub**: [github.com/Track-Trace-TCC](https://github.com/Track-Trace-TCC)
+
+---
+
+**Nota**: Certifique-se de substituir os valores de exemplo e os contatos com as informações reais do seu projeto.
