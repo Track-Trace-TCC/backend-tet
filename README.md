@@ -87,6 +87,3 @@ Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em c
 - **Email**: viniciusataides@gmail.com
 - **GitHub**: [github.com/Track-Trace-TCC](https://github.com/Track-Trace-TCC)
 
----
-
-**Nota**: Certifique-se de substituir os valores de exemplo e os contatos com as informações reais do seu projeto.
